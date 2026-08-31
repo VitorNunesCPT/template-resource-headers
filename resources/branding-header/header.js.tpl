@@ -3,11 +3,6 @@
   const mobileLogos = __HEADER_MOBILE_LOGOS__;
   const logoStyles = __LOGO_STYLES__;
 
-  function isWelcomeRoute() {
-    const pathname = window.location.pathname || '/';
-    return pathname === '/' || pathname.endsWith('/');
-  }
-
   function removeHeader() {
     const current = document.getElementById('ts-brand-header');
     if (current) {
@@ -18,11 +13,6 @@
 
   function ensureHeader() {
     if (!document.body) {
-      return;
-    }
-
-    if (!isWelcomeRoute()) {
-      removeHeader();
       return;
     }
 

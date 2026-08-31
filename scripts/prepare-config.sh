@@ -22,11 +22,15 @@ BRANDING_SCRIPT="${SCRIPT_DIR}/branding-header.sh"
 
 mkdir -p "${CONFIG_WEB_DIR}"
 
-cp -f "${REPO_ROOT}/config.js" "${CUSTOM_CONFIG_FILE}"
-cp -f "${REPO_ROOT}/interface_config.js" "${CUSTOM_INTERFACE_CONFIG_FILE}"
+if [[ -f "${REPO_ROOT}/config.js" ]]; then
+    cp -f "${REPO_ROOT}/config.js" "${CUSTOM_CONFIG_FILE}"
+    echo "config.js -> ${CUSTOM_CONFIG_FILE}"
+fi
 
-echo "config.js -> ${CUSTOM_CONFIG_FILE}"
-echo "interface_config.js -> ${CUSTOM_INTERFACE_CONFIG_FILE}"
+if [[ -f "${REPO_ROOT}/interface_config.js" ]]; then
+    cp -f "${REPO_ROOT}/interface_config.js" "${CUSTOM_INTERFACE_CONFIG_FILE}"
+    echo "interface_config.js -> ${CUSTOM_INTERFACE_CONFIG_FILE}"
+fi
 #here
 if [[ "${ENABLE_BRANDING_HEADER:-0}" == "1" ]]; then
     "${BRANDING_SCRIPT}" apply --no-restart
