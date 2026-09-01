@@ -15,9 +15,11 @@ fi
 
 CONFIG="${CONFIG:-${HOME}/.jitsi-meet-cfg}"
 CONFIG_WEB_DIR="${CONFIG}/web"
+CONFIG_PROSODY_CUSTOM_PLUGINS_DIR="${CONFIG}/prosody/prosody-plugins-custom"
 CUSTOM_CONFIG_FILE="${CONFIG_WEB_DIR}/custom-config.js"
 CUSTOM_INTERFACE_CONFIG_FILE="${CONFIG_WEB_DIR}/custom-interface_config.js"
 BRANDING_SCRIPT="${SCRIPT_DIR}/branding-header.sh"
+CUSTOM_PROSODY_PLUGINS_SRC_DIR="${REPO_ROOT}/resources/prosody-plugins-custom"
 WATERMARK_MARKER_BEGIN="// BEGIN managed jitsi watermark"
 WATERMARK_MARKER_END="// END managed jitsi watermark"
 APP_NAME_MARKER_BEGIN="// BEGIN managed jitsi app name"
@@ -84,6 +86,20 @@ EOF
     fi
 }
 
+apply_custom_prosody_plugins() {
+    local plugin
+
+    [[ -d "${CUSTOM_PROSODY_PLUGINS_SRC_DIR}" ]] || return 0
+
+    mkdir -p "${CONFIG_PROSODY_CUSTOM_PLUGINS_DIR}"
+
+    for plugin in "${CUSTOM_PROSODY_PLUGINS_SRC_DIR}"/mod_*.lua; do
+        [[ -f "${plugin}" ]] || continue
+        cp -f "${plugin}" "${CONFIG_PROSODY_CUSTOM_PLUGINS_DIR}/"
+        echo "$(basename "${plugin}") -> ${CONFIG_PROSODY_CUSTOM_PLUGINS_DIR}/"
+    done
+}
+
 mkdir -p "${CONFIG_WEB_DIR}"
 
 if [[ -f "${REPO_ROOT}/config.js" ]]; then
@@ -98,6 +114,7 @@ fi
 
 apply_watermark_config
 apply_app_name_config
+apply_custom_prosody_plugins
 
 if [[ "${ENABLE_BRANDING_HEADER:-0}" == "1" ]]; then
     "${BRANDING_SCRIPT}" apply --no-restart
